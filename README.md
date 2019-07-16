@@ -90,4 +90,4 @@ Install GitHub app:
 Configuration is passed via environment variables.
 
 See the [config Godoc](https://godoc.org/github.com/kscout/ops-bot/config) for 
-documentation about the available configuration options.
+information about the available configuration options.
