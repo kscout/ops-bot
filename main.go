@@ -8,9 +8,9 @@ import (
 	"sync"
 
 	"github.com/kscout/ops-bot/handlers"
+	"github.com/kscout/ops-bot/config"
 	
 	"github.com/Noah-Huppert/golog"
-	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
@@ -27,8 +27,8 @@ func main() {
 
 	var doneGroup sync.WaitGroup
 
-	var cfg Config
-	if err := envconfig.Process("app", &cfg); err != nil {
+	cfg, err := config.NewConfig()
+	if err != nil {
 		logger.Fatalf("failed to load configuration: %s", err.Error())
 	}
 
