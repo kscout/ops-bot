@@ -56,7 +56,7 @@ Options:
 Create a new GitHub app:
 
 1. Set the Homepage URL to `https://github.com/kscout/ops-bot`
-2. Set the Webhook URL to `https://<deploy host>/api/v0/github/webhook`
+2. Set the Webhook URL to `https://<deploy host>/github/webhook`
 3. Set the Webhook Secret
 4. Permissions:
    - Repository administration: Read-only

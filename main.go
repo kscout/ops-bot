@@ -6,9 +6,10 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+
+	"github.com/kscout/ops-bot/handlers"
 	
 	"github.com/Noah-Huppert/golog"
-	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -38,7 +39,8 @@ func main() {
 	}
 
 	// {{{1 Setup HTTP server
-	router := mux.NewRouter()
+	router := handlers.NewRouter()
+	router.Add(handlers.HealthHandler{})
 	
 	server := http.Server{
 		Addr: cfg.HTTPAddr,
