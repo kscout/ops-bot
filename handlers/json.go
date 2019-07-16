@@ -35,3 +35,4 @@ func (r JSONResponder) Respond(w http.ResponseWriter) {
 		panic(fmt.Errorf("error JSON encoding %#v: %s", r.Data, err.Error()))
 	}
 }
+

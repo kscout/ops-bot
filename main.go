@@ -38,7 +38,10 @@ func main() {
 	
 	server := http.Server{
 		Addr: cfg.HTTPAddr,
-		Handler: router,
+		Handler: handlers.PanicHandler{
+			Logger: logger.GetChild("panic"),
+			Hander: router,
+		},
 	}
 
 	doneGroup.Add(1)
