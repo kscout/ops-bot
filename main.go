@@ -13,12 +13,6 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-// Config for ops bot
-type Config struct {
-	// HTTPAddr is the address to start the HTTP API server
-	HTTPAddr string `default:":5000" split_words:"true" required:"true"`
-}
-
 func main() {
 	// {{{1 Initial setup
 	context, cancelFn := context.WithCancel(context.Background())
