@@ -1,11 +1,18 @@
+[![GoDoc](https://godoc.org/github.com/kscout/ops-bot?status.svg)](https://godoc.org/github.com/kscout/ops-bot)
+
 # Ops Bot
 Development helper bot.
 
 # Table Of Contents
 - [Overview](#overview)
 - [Interact](#interact)
+  - [Summon](#summon)
+  - [Permissions](#permissions)
+  - [Commands](#commands)
+	- [Deploy Command](#deploy-command)
 - [Configure](#configure)
-  - [GitHub App](#github-app)
+  - [Configure GitHub App](#configure-github-app)
+  - [Configure Application](#configure-application)
   
 # Overview
 Chat bot which completes development operations.
@@ -52,7 +59,7 @@ Options:
 - `<env>` (String) Environment to deploy pull request
   
 # Configure
-## GitHub App
+## Configure GitHub App
 Create a new GitHub app:
 
 1. Set the Homepage URL to `https://github.com/kscout/ops-bot`
@@ -78,3 +85,9 @@ Install GitHub app:
 
 1. Install on all repositories
 2. Generate private key
+
+## Configure Application
+Configuration is passed via environment variables.
+
+See the [config Godoc](https://godoc.org/github.com/kscout/ops-bot/config) for 
+documentation about the available configuration options.
