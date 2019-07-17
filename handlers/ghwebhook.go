@@ -81,65 +81,25 @@ func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Header().Get("X-Github-Event") {
 	case "issue_comment":
 		// {{{2 Parse
-		var issueCommentEvent github.IssueCommentEvent
-		if err := json.Unmarshal(bodyBytes, &issueCommentEvent); err != nil {
+		var commentEvent github.IssueCommentEvent
+		if err := json.Unmarshal(bodyBytes, &commentEvent); err != nil {
 			panic(fmt.Errorf("failed to unmarshal issue comment event as JSON: %s",
 				err.Error()))
 		}
 
-		// {{{2 Check if issue comment should spawn a message
-		if len(issueCommentEvent.GetAction()) == 0 {
-			break
-		}
-
 		// Ignore comment edits and deletes
-		if issueCommentEvent.GetAction() != "created" {
-			break
-		}
-
-		// Ignore empty messages
-		if issueCommentEvent.GetComment() == nil {
-			break
-		}
-
-		if len(issueCommentEvent.GetComment().GetBody()) == 0 {
-			break
-		}
-
-		// Ignore comments where we can't determine what issue it came from
-		repo := issueCommentEvent.GetRepo()
-		issue := issueCommentEvent.GetIssue()
-		
-		if repo == nil || issue == nil {
-			break
-		}
-
-		repoOwner := repo.GetOwner()
-		
-		if repoOwner == nil {
-			break
-		}
-
-		if len(repoOwner.GetLogin()) == 0 {
-			break
-		}
-
-		if len(repo.GetName()) == 0 {
-			break
-		}
-
-		if issue.GetNumber() == 0 {
+		if commentEvent.GetAction() != "created" {
 			break
 		}
 
 		// {{{2 Send message to bus
 		h.MessageBus <- messages.Message{
-			Body: issueCommentEvent.GetComment().GetBody(),
+			Body: commentEvent.GetComment().GetBody(),
 			Responder: gh.IssueResponder{
 				GH: h.GH,
-				RepoOwner: repoOwner.GetLogin(),
-				RepoName: repo.GetName(),
-				Number: issue.GetNumber(),
+				RepoOwner: commentEvent.Issue.Repo.Owner.GetLogin(),
+				RepoName: commentEvent.Issue.Repo.GetName(),
+				Number: commentEvent.Issue.GetNumber(),
 			},
 		}
 
