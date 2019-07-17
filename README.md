@@ -24,7 +24,8 @@ See the [develop section](#develop) to learn how to contribute.
 
 # Interact
 ## Summon
-Bot responds to GitHub pull request messages in the KScout organization.
+Bot responds to GitHub issue and pull request comments in the 
+KScout organization.
 
 Bot only takes action if summoned via an @-mention:
 
