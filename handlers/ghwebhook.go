@@ -3,14 +3,17 @@ package handlers
 import (
 	"crypto/hmac"
 	"crypto/sha1"
-	"fmt"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 
-	"github.com/kscout/ops-bot/messages"
 	"github.com/kscout/ops-bot/gh"
-	
-	"github.com/gorilla/mux"
+	"github.com/kscout/ops-bot/messages"
+
 	"github.com/google/go-github/github"
+	"github.com/gorilla/mux"
 )
 
 // GHWebhookHandler receives GitHub event notifications from GitHub.
@@ -23,7 +26,7 @@ import (
 type GHWebhookHandler struct {
 	// GH API client
 	GH *github.Client
-	
+
 	// GHWebhookSecret is key used to sign an HMAC of GitHub webhook requests
 	// See config.Config#GHWebhookSecret for more details.
 	GHWebhookSecret string
@@ -54,13 +57,13 @@ func (h GHWebhookHandler) Register(router *mux.Router) {
 // Responds with GHWebhookResponse.
 func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// {{{1 Verify request signature
-	actualHubSig := r.Header().Get("X-Hub-Signature")
-	
+	actualHubSig := r.Header.Get("X-Hub-Signature")
+
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(fmt.Errorf("failed to read request body: %s", err.Error()))
 	}
-	
+
 	bodyHMAC := hmac.New(sha1.New, []byte(h.GHWebhookSecret))
 	bodyHMAC.Write(bodyBytes)
 
@@ -69,7 +72,7 @@ func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !hmac.Equal([]byte(expectedHubSig), []byte(actualHubSig)) {
 		resp := JSONResponder{
 			Status: http.StatusUnauthorized,
-			Data: NewError(fmt.Errorf("request signature did not match expected value")),
+			Data:   NewError(fmt.Errorf("request signature did not match expected value")),
 		}
 		resp.Respond(w)
 		return
@@ -77,8 +80,8 @@ func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// {{{1 Spawn messages for events
 	hadMessages := false
-	
-	switch r.Header().Get("X-Github-Event") {
+
+	switch r.Header.Get("X-Github-Event") {
 	case "issue_comment":
 		// {{{2 Parse
 		var commentEvent github.IssueCommentEvent
@@ -96,15 +99,15 @@ func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.MessageBus <- messages.Message{
 			Body: commentEvent.GetComment().GetBody(),
 			Responder: gh.IssueResponder{
-				GH: h.GH,
-				RepoOwner: commentEvent.Issue.Repo.Owner.GetLogin(),
-				RepoName: commentEvent.Issue.Repo.GetName(),
-				Number: commentEvent.Issue.GetNumber(),
+				GH:        h.GH,
+				RepoOwner: commentEvent.Issue.Repository.Owner.GetLogin(),
+				RepoName:  commentEvent.Issue.Repository.GetName(),
+				Number:    commentEvent.Issue.GetNumber(),
 			},
 		}
 
 		hadMessages = true
-		
+
 		break
 	}
 
@@ -112,7 +115,7 @@ func (h GHWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp := JSONResponder{
 		Status: http.StatusOK,
 		Data: GHWebhookResponse{
-			OK: true,
+			OK:          true,
 			HadMessages: hadMessages,
 		},
 	}

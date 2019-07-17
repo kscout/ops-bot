@@ -17,7 +17,7 @@ import (
 
 func main() {
 	// {{{1 Initial setup
-	context, cancelFn := context.WithCancel(context.Background())
+	ctx, cancelFn := context.WithCancel(context.Background())
 	logger := golog.NewStdLogger("ops-bot")
 
 	sigs := make(chan os.Signal, 1)
@@ -69,8 +69,8 @@ func main() {
 	server := http.Server{
 		Addr: cfg.HTTPAddr,
 		Handler: handlers.PanicHandler{
-			Logger: logger.GetChild("panic"),
-			Hander: httpRouter,
+			Logger:  logger.GetChild("panic"),
+			Handler: httpRouter,
 		},
 	}
 
@@ -88,7 +88,7 @@ func main() {
 	go func() {
 		defer doneGroup.Done()
 
-		<-context.Done()
+		<-ctx.Done()
 
 		logger.Debug("closing HTTP server")
 		if err := server.Close(); err != nil {
