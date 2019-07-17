@@ -13,11 +13,14 @@ Development helper bot.
 - [Configure](#configure)
   - [Configure GitHub App](#configure-github-app)
   - [Configure Application](#configure-application)
+- [Develop](#develop)
   
 # Overview
 Chat bot which completes development operations.
 
 See [interact section](#interact) for details on how to use the bot.
+
+See the [develop section](#develop) to learn how to contribute.
 
 # Interact
 ## Summon
@@ -91,3 +94,9 @@ Configuration is passed via environment variables.
 
 See the [config Godoc](https://godoc.org/github.com/kscout/ops-bot/config) for 
 information about the available configuration options.
+
+# Develop
+Most of the developer documentation is located in the 
+[godoc](https://godoc.org/github.com/kscout/ops-bot]. See the 
+[handlers godoc](https://godoc.org/github.com/kscout/ops-bot/handlers] for 
+HTTP API documentation.
